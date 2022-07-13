@@ -1,0 +1,103 @@
+{
+ "data-bucket": {
+  "S": "iop-cloudanalytics-logs-us-east-2-560597064362"
+  iop-cloudanalytics-logs-334819277251-us-east-2
+  iop-cloudanalytics-logs-004338334110-us-east-2
+ }
+}
+
+{
+ "log-group": {
+  "S": "/var/log/audit"
+ }
+}
+
+{
+ "log-group": {
+  "S": "/var/log/secure"
+ }
+}
+
+{
+ "log-group": {
+  "S": "/var/log/nginx"
+ }
+}
+
+{
+ "log-group": {
+  "S": "/var/log/jumpgate"
+ }
+}
+
+{
+ "log-group": {
+  "S": "/var/log/sudo"
+ }
+}
+
+{
+ "log-group": {
+  "S":  "/var/log/raz"
+ }
+}
+
+{
+ "log-group": {
+  "S": "/var/log/hadoop-hdfs"
+ }
+}
+
+{
+ "log-group": {
+  "S":  "/var/log/knox/idbroker"
+ }
+}
+
+{
+ "log-group": {
+  "S":  "/var/log/atlas"
+ }
+}
+
+-or-
+
+{
+ "data-bucket": "iop-cloudanalytics-logs-us-east-2-560597064362"
+}
+
+{
+ "log-group": "/var/log/audit"
+}
+
+{
+ "log-group": "/var/log/secure"
+}
+
+{
+ "log-group": "/var/log/nginx"
+}
+
+{
+ "log-group": "/var/log/jumpgate"
+}
+
+{
+ "log-group": "/var/log/sudo"
+}
+
+{
+ "log-group":  "/var/log/raz"
+}
+
+{
+ "log-group": "/var/log/hadoop-hdfs"
+}
+
+{
+ "log-group": "/var/log/knox/idbroker"
+}
+
+{
+ "log-group": "/var/log/atlas"
+}

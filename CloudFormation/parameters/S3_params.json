@@ -1,0 +1,6 @@
+{
+    "Parameters": {
+        "ResourceName": {"Fn::GetParam": ["SourceCode", "basic_params.json", "ResourceName"]},
+        "Creator": {"Fn::GetParam": ["SourceCode", "basic_params.json", "Creator"]}
+  }
+}

@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates a basic DynamoDB Table
+
+Parameters:
+# ----------- Resource Details ----------- #
+  ResourceName:
+    Description: Name for the Resource
+    AllowedPattern: ^([A-Za-z0-9_-]*)?$
+    Type: String
+  Creator:
+    Description: Creator's Name
+    AllowedPattern: ^([A-Za-z ]*)?$
+    Type: String
+
+Resources:
+    DynamoDBMainTable:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+            - 
+                AttributeName: "data-bucket"
+                AttributeType: "S"
+            KeySchema: 
+            - 
+                AttributeName: "data-bucket"
+                KeyType: "HASH"
+            ProvisionedThroughput: 
+                ReadCapacityUnits: "5"
+                WriteCapacityUnits: "5"
+            TableName: "CWEMainTable"
+            Tags:
+                - Key: ResourceName
+                  Value: !Sub ${ResourceName}-CWEMainTable-${AWS::Region}-${AWS::AccountId}
+                - Key: Creator
+                  Value: !Ref Creator
+                - Key: Purpose
+                  Value: This is the main bucket to store the logs
+    DynamoDBLogTable:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+            - 
+                AttributeName: "log-group"
+                AttributeType: "S"
+            KeySchema: 
+            - 
+                AttributeName: "log-group"
+                KeyType: "HASH"
+            ProvisionedThroughput: 
+                ReadCapacityUnits: "5"
+                WriteCapacityUnits: "5"
+            TableName: "CWELogTable"
+            Tags:
+                - Key: ResourceName
+                  Value: !Sub ${ResourceName}-CWELogTable-${AWS::Region}-${AWS::AccountId}
+                - Key: Creator
+                  Value: !Ref Creator
+                - Key: Purpose
+                  Value: This is the List of LogGroups to extract from CloudWatch
+
+Outputs:
+    oDynamoDBMainTable:
+        Value: !Ref DynamoDBMainTable
+        Description: DynamoDB Main Table
+    oDynamoDBLogTable:
+        Value: !Ref DynamoDBLogTable
+        Description: DynamoDB Log Table

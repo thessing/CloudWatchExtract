@@ -1,0 +1,38 @@
+[
+    {
+        "ParameterKey": "PipelineName",
+        "ParameterValue": "cwe",
+    },
+    {
+        "ParameterKey": "GitHubOwner",
+        "ParameterValue": "nobody"
+    },
+    {
+        "ParameterKey": "GitHubRepo",
+        "ParameterValue": "norepo"
+    },
+    {
+        "ParameterKey": "GitHubBranch",
+        "ParameterValue": "main"
+    },
+    {
+        "ParameterKey": "GitHubToken",
+        "ParameterValue": "notoken"
+    },
+    {
+        "ParameterKey": "SourceBucket",
+        "ParameterValue": "cf-source-us-east-2-004338334110"
+    },
+    {
+        "ParameterKey": "SourceKey",
+        "ParameterValue": "CloudWatchExtract.zip"
+    },
+    {
+        "ParameterKey": "PipelineBucket",
+        "ParameterValue": "codepipeline-us-east-2-004338334110"
+    },
+    {
+        "ParameterKey": "YAMLdir",
+        "ParameterValue": "CloudFormation"
+    }
+] 

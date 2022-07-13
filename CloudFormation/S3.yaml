@@ -1,0 +1,95 @@
+Description: Creates an S3 bucket and Group with associated policy to allow read access to bucket
+Parameters:
+  ResourceName:
+    Description: Name for the Resource
+#    AllowedPattern: ^([a-z0-9_-]*)?$
+    Type: String
+  Creator:
+    Description: Creator's Name
+    AllowedPattern: ^([A-Za-z ]*)?$
+    Type: String
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub iop-cloudanalytics-logs-${AWS::AccountId}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+            BucketKeyEnabled: true
+      Tags:
+        - Key: ResourceName
+          Value: !Sub iop-cloudanalytics-logs-${AWS::AccountId}-${AWS::Region}
+        - Key: Creator
+          Value: !Ref Creator
+        - Key: Purpose
+          Value: This bucket stores IOP Logs from CloudWatch and elsewhere.
+
+  S3ucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: "AWSCloudWatchLogsAclCheck20150319"
+            Effect: "Allow"
+            Principal:
+              Service: !Sub "logs.${AWS::Region}.amazonaws.com"
+            Action: "s3:GetBucketAcl"
+            Resource: !Sub 'arn:aws:s3:::${S3Bucket}'
+          - Sid: "AWSCCloudWatchLogsAcllWrite20150319"
+            Effect: "Allow"
+            Principal:
+              Service: !Sub "logs.${AWS::Region}.amazonaws.com"
+            Action: "s3:PutObject"
+            Resource: !Sub 'arn:aws:s3:::${S3Bucket}/*'
+            Condition:
+                StringEquals:
+                  "s3:x-amz-acl": "bucket-owner-full-control"
+
+  S3Group:
+    Type: AWS::IAM::Group
+    Properties: 
+      GroupName: !Sub CloudAnalytics-logs-${AWS::AccountId}-${AWS::Region}
+
+  AccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties: 
+      Groups:
+        - !Ref S3Group
+      PolicyName: !Sub S3ReadOnlyAccess-cloudanalytics-logs-${AWS::AccountId}-${AWS::Region}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Sid: "S3ReadOnlyAccess" 
+          Action:
+          - s3:Get*
+          - s3:List*
+          - s3-object-lambda:Get*
+          - s3-object-lambda:List*
+          Resource: 
+          - !Sub 'arn:aws:s3:::${S3Bucket}'
+          - !Sub 'arn:aws:s3:::${S3Bucket}/*'
+          Effect: Allow
+
+# REMOVED THIS...
+#
+#  EmptyS3Bucket:
+#    Type: Custom::emptyS3bucket
+#    Properties:
+#      ServiceToken: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ResourceName}-EmptyS3-${AWS::Region}-${AWS::AccountId}
+#      BucketName: !Ref S3Bucket
+#    DependsOn: S3Bucket
+
+Outputs:
+  oS3bucket:
+    Value: !Ref S3Bucket
+    Description: S3 Bucket Name

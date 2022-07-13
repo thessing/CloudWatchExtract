@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates Lambda and resources to run as
+
+Parameters:
+# ----------- Resource Details ----------- #
+  ResourceName:
+    Description: Name for the Resource
+    AllowedPattern: ^([A-Za-z0-9_-]*)?$
+    Type: String
+  Creator:
+    Description: Creator's Name
+    AllowedPattern: ^([A-Za-z ]*)?$
+    Type: String
+
+  Timestamp:
+    Description: Timestamp for current build
+    Type: String
+  SourceBucket:
+    Description: Name of bucket containing zipped lambda
+    Type: String
+  PipelineName:
+    Description: Name of pipeline
+    Type: String
+
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${ResourceName}-Lambda-${AWS::Region}-${AWS::AccountId}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS: !Sub ${AWS::AccountId}
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: !Sub ${ResourceName}-Lambda-${AWS::Region}-${AWS::AccountId}
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Action:
+                - 'logs:CreateLogGroup'
+                - 'logs:CreateLogStream'
+                - 'logs:PutLogEvents'
+              Effect: Allow
+              Resource: '*'
+      Path: '/'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess
+        - arn:aws:iam::aws:policy/CloudWatchLogsReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      Tags:
+        - Key: ResourceName
+          Value: !Sub ${ResourceName}-Lambda-${AWS::Region}-${AWS::AccountId}
+        - Key: Creator
+          Value: !Ref Creator
+        - Key: Purpose
+          Value: This is the role for the CWELambda lambda
+  CWELambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Code:
+        S3Bucket: !Ref SourceBucket
+        S3Key: !Sub ${PipelineName}/artifacts/${Timestamp}/CloudWatchExtract.zip
+      FunctionName: !Sub ${ResourceName}-${AWS::Region}-${AWS::AccountId}
+      Timeout: 300
+      Role: !GetAtt LambdaRole.Arn
+      Tags:
+        - Key: ResourceName
+          Value: !Sub ${ResourceName}-${AWS::Region}-${AWS::AccountId}
+        - Key: Creator
+          Value: !Ref Creator
+        - Key: Purpose
+          Value: This lambda extract CloudWatch Logs specified in DynmoDB and puts them in S3
+  CWEurl:
+    Type: AWS::Lambda::Url
+    DependsOn: CWELambda
+    Properties: 
+      AuthType: NONE # AWS_IAM or NONE
+      Cors: 
+          AllowCredentials: FALSE   # TRUE/FALSE or nothing
+          AllowOrigins:             # * for all
+            - '*'                   # https://www.example.com and/or http://localhost:60905
+          AllowMethods:             # GET, POST, DELETE, * 
+            - '*'
+      TargetFunctionArn: !GetAtt CWELambda.Arn
+
+  PubCWE:
+    Type: AWS::Lambda::Permission
+    DependsOn: CWELambda
+    Properties:
+      Action: lambda:InvokeFunctionURL
+      FunctionName: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ResourceName}-${AWS::Region}-${AWS::AccountId}
+      Principal: '*'
+      FunctionUrlAuthType: NONE
+
+  EventRule:
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: Daily Trigger to run CWE Lambda every 4 hours
+      Name: CWETrigger
+      ScheduleExpression: "rate(4 hours)"
+      State: ENABLED
+      Targets: 
+        - Arn: !GetAtt CWELambda.Arn
+          Id: "CWELambda"
+
+  PermissionForEventsToInvokeLambda: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: !Ref CWELambda
+      Action: lambda:InvokeFunction
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt EventRule.Arn
+
+Outputs:
+  cweARN:
+    Value: !GetAtt CWELambda.Arn
+    Description:  CWE ARN
+  cweURL:
+    Value: !GetAtt CWEurl.FunctionUrl
+    Description:  CWE URL
