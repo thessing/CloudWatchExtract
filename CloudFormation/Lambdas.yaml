@@ -80,27 +80,27 @@ Resources:
           Value: !Ref Creator
         - Key: Purpose
           Value: This lambda extract CloudWatch Logs specified in DynmoDB and puts them in S3
-  CWEurl:
-    Type: AWS::Lambda::Url
-    DependsOn: CWELambda
-    Properties: 
-      AuthType: NONE # AWS_IAM or NONE
-      Cors: 
-          AllowCredentials: FALSE   # TRUE/FALSE or nothing
-          AllowOrigins:             # * for all
-            - '*'                   # https://www.example.com and/or http://localhost:60905
-          AllowMethods:             # GET, POST, DELETE, * 
-            - '*'
-      TargetFunctionArn: !GetAtt CWELambda.Arn
-
-  PubCWE:
-    Type: AWS::Lambda::Permission
-    DependsOn: CWELambda
-    Properties:
-      Action: lambda:InvokeFunctionURL
-      FunctionName: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ResourceName}-${AWS::Region}-${AWS::AccountId}
-      Principal: '*'
-      FunctionUrlAuthType: NONE
+#  CWEurl:
+#    Type: AWS::Lambda::Url
+#    DependsOn: CWELambda
+#    Properties: 
+#      AuthType: NONE # AWS_IAM or NONE
+#      Cors: 
+#          AllowCredentials: FALSE   # TRUE/FALSE or nothing
+#          AllowOrigins:             # * for all
+#            - '*'                   # https://www.example.com and/or http://localhost:60905
+#          AllowMethods:             # GET, POST, DELETE, * 
+#            - '*'
+#      TargetFunctionArn: !GetAtt CWELambda.Arn
+#
+#  PubCWE:
+#    Type: AWS::Lambda::Permission
+#    DependsOn: CWELambda
+#    Properties:
+#      Action: lambda:InvokeFunctionURL
+#      FunctionName: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ResourceName}-${AWS::Region}-${AWS::AccountId}
+#      Principal: '*'
+#      FunctionUrlAuthType: NONE
 
   EventRule:
     Type: AWS::Events::Rule
@@ -125,6 +125,6 @@ Outputs:
   cweARN:
     Value: !GetAtt CWELambda.Arn
     Description:  CWE ARN
-  cweURL:
-    Value: !GetAtt CWEurl.FunctionUrl
-    Description:  CWE URL
+#  cweURL:
+#    Value: !GetAtt CWEurl.FunctionUrl
+#    Description:  CWE URL

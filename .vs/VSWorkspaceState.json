@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\CloudFormation"
+    "\\CloudFormation",
+    "\\CloudFormation\\parameters",
+    "\\Lambdas",
+    "\\Lambdas\\CloudWatchExtract"
   ],
+  "SelectedNode": "\\CloudFormation\\S3.yaml",
   "PreviewInSolutionExplorer": false
 }
