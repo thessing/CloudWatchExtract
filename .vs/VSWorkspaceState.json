@@ -6,6 +6,6 @@
     "\\Lambdas",
     "\\Lambdas\\CloudWatchExtract"
   ],
-  "SelectedNode": "\\CloudFormation\\S3.yaml",
+  "SelectedNode": "\\CloudFormation\\Lambdas.yaml",
   "PreviewInSolutionExplorer": false
 }
