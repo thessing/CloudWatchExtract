@@ -8,6 +8,6 @@ This Respository uses AWS CodePipeline to build out the following to extract Clo
 <li>The <b>AWS IAM Role & Policy</b> for that Lambda's execution.</li>
 <li>An <b>Amazon S3</b> bucket,</li>
 <li>An <b>AWS IAM</b> Group for user(s) to be manually added, and</li>
-<li>An <b>AWS IAM</b> Policy for this Group with Read access to the S3 bucket</li>
+<li>An <b>AWS IAM</b> Policy for this Group with Read access to the S3 bucket,</li>
 </ul>
-as well as any other necessary AWS resources to suppor the above services.
+as well as any other necessary AWS resources to support the above services.
