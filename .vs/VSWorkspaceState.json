@@ -1,11 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\CloudFormation",
     "\\CloudFormation\\parameters",
-    "\\Lambdas",
     "\\Lambdas\\CloudWatchExtract"
   ],
-  "SelectedNode": "\\CloudFormation\\Lambdas.yaml",
+  "SelectedNode": "\\DynamoItemExample.json",
   "PreviewInSolutionExplorer": false
 }
